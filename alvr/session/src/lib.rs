@@ -99,6 +99,7 @@ pub struct OpenvrConfig {
     pub sharpening: f32,
     pub enable_fec: bool,
     pub linux_async_reprojection: bool,
+    pub enable_auto_tethering: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -152,6 +153,7 @@ impl Default for SessionDesc {
                 enable_foveated_rendering: false,
                 enable_color_correction: false,
                 linux_async_reprojection: true,
+                enable_auto_tethering: true,
                 ..<_>::default()
             },
             client_connections: HashMap::new(),

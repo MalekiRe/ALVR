@@ -191,7 +191,7 @@ dependencies = [
 
 [[package]]
 name = "alvr_launcher"
-version = "18.0.0-dev02"
+version = "18.0.0-dev02+nightly.2022.05.22"
 dependencies = [
  "alvr_commands",
  "alvr_common",
@@ -207,7 +207,7 @@ dependencies = [
 
 [[package]]
 name = "alvr_server"
-version = "18.0.0-dev02"
+version = "18.0.0-dev02+nightly.2022.05.22"
 dependencies = [
  "alcro",
  "alvr_audio",
@@ -223,6 +223,7 @@ dependencies = [
  "bytes",
  "cc",
  "chrono",
+ "dirs",
  "fern",
  "futures",
  "headers",

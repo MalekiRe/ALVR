@@ -470,6 +470,7 @@ async fn client_handshake(
         sharpening: session_settings.video.color_correction.content.sharpening,
         enable_fec: session_settings.connection.enable_fec,
         linux_async_reprojection: session_settings.extra.patches.linux_async_reprojection,
+        enable_auto_tethering: session_settings.extra.patches.enable_auto_tethering,
     };
 
     if SERVER_DATA_MANAGER.lock().session().openvr_config != new_openvr_config {

@@ -1,6 +1,6 @@
 Name: alvr
 Version: 18.0.0
-Release: 0.0.1dev02
+Release: 0.0.1dev02+nightly.2022.05.22
 Summary: Stream VR games from your PC to your headset via Wi-Fi
 License: MIT
 Source: https://github.com/alvr-org/ALVR/archive/refs/tags/v18.0.0-dev02.tar.gz

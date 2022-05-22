@@ -88,7 +88,7 @@ public:
 	std::string mControllerRegisteredDeviceType;
 	std::string m_controllerInputProfilePath;
 	bool m_disableController;
-	
+
 	double m_controllerPoseOffset = 0;
 	bool m_serversidePrediction;
 	float m_linearVelocityCutoff;
@@ -129,4 +129,6 @@ public:
 	bool m_enableFec;
 
 	bool m_enableLinuxVulkanAsync;
+
+	bool m_enableAutoTethering;
 };

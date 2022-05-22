@@ -163,7 +163,9 @@ void Settings::Load()
 		m_enableFec = config.get("enable_fec").get<bool>();
 
 		m_enableLinuxVulkanAsync = config.get("linux_async_reprojection").get<bool>();
-		
+
+		m_enableAutoTethering = config.get("enable_auto_tethering").get<bool>();
+
 		Debug("Config JSON: %hs\n", json.c_str());
 		Info("Serial Number: %hs\n", mSerialNumber.c_str());
 		Info("Model Number: %hs\n", mModelNumber.c_str());

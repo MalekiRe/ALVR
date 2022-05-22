@@ -40,6 +40,8 @@ use std::{
     thread,
     time::Duration,
 };
+use std::thread::sleep;
+use fern::Output;
 use tokio::{
     runtime::Runtime,
     sync::{broadcast, mpsc, Notify},
@@ -118,7 +120,8 @@ pub fn to_cpp_openvr_prop(key: OpenvrPropertyKey, value: OpenvrPropValue) -> Ope
 
 pub fn shutdown_runtime() {
     alvr_events::send_event(EventType::ServerQuitting);
-
+    let adb_path_string: String = String::from(dirs::home_dir().unwrap().to_str().unwrap())+"/.config/SideQuest/platform-tools/adb";
+    run_adb_command(adb_path_string.as_str(), "kill-server", true);
     if let Some(window) = WINDOW.lock().take() {
         window.close();
     }
@@ -163,7 +166,12 @@ fn init() {
     let (log_sender, _) = broadcast::channel(web_server::WS_BROADCAST_CAPACITY);
     let (events_sender, _) = broadcast::channel(web_server::WS_BROADCAST_CAPACITY);
     logging_backend::init_logging(log_sender.clone(), events_sender.clone());
-
+    let adb_path_string: String = String::from(dirs::home_dir().unwrap().to_str().unwrap())+"/.config/SideQuest/platform-tools/adb";
+    if SERVER_DATA_MANAGER.lock().session().openvr_config.enable_auto_tethering {
+        run_adb_command(adb_path_string.as_str(), "kill-server", true);
+        run_adb_command(adb_path_string.as_str(), "start-server", true);
+    }
+    let mut num_devices = 0;
     if let Some(runtime) = RUNTIME.lock().as_mut() {
         // Acquire and drop the data manager lock to create session.json if not present
         // this is needed until Settings.cpp is replaced with Rust. todo: remove
@@ -175,6 +183,24 @@ fn init() {
                 .session()
                 .client_connections
                 .clone();
+            if SERVER_DATA_MANAGER.lock().session().openvr_config.enable_auto_tethering {
+                thread::spawn(move || {
+                    loop {
+                        sleep(Duration::from_millis(20));
+                        let adb_path_str = adb_path_string.as_str();
+                        let output = run_adb_command(adb_path_str, "devices -l", false).stdout;
+                        let my_str = String::from_utf8(output).unwrap();
+                        let number: Vec<_> = my_str.match_indices("Quest").collect();
+                        if number.len() != num_devices {
+                            num_devices = number.len();
+                            run_adb_command(adb_path_str, "forward --remove-all", true);
+                            run_adb_command(adb_path_str, "forward tcp:9943 tcp:9943", true);
+                            run_adb_command(adb_path_str, "forward tcp:9944 tcp:9944", true);
+                            println!("device unplugged re-forwarding");
+                        }
+                    }
+                });
+            }
             for (hostname, connection) in connections {
                 if !connection.trusted {
                     SERVER_DATA_MANAGER.lock().update_client_list(
@@ -195,7 +221,6 @@ fn init() {
                 _ = SHUTDOWN_NOTIFIER.notified() => (),
             }
         });
-
         thread::spawn(|| alvr_common::show_err(dashboard::ui_thread()));
     }
 
@@ -230,6 +255,18 @@ fn init() {
         .unwrap()
         .into_raw();
     };
+    //setting up ADB server
+
+}
+
+/// ADB
+pub fn run_adb_command(path: &str, command: &str, debug_output: bool) -> std::process::Output {
+    let mut my_command = std::process::Command::new(path);
+    command.split(" ").for_each(|s| {my_command.arg(s.to_string());});
+    if debug_output {
+        println!("running: {}", command);
+    }
+    my_command.output().expect("failed to execute process")
 }
 
 /// # Safety

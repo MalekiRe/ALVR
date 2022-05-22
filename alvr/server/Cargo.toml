@@ -1,6 +1,6 @@
 [package]
 name = "alvr_server"
-version = "18.0.0-dev02"
+version = "18.0.0-dev02+nightly.2022.05.22"
 authors = ["alvr-org", "polygraphene", "Valve Corporation"]
 license = "MIT"
 edition = "2021"
@@ -24,6 +24,7 @@ alvr_sockets = { path = "../sockets" }
 
 # Basic utilities
 chrono = "0.4"
+dirs = "4.0.0"
 # Serialization
 bincode = "1"
 serde = "1"

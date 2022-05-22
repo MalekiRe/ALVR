@@ -358,6 +358,7 @@ pub struct ControllersDesc {
 pub struct Patches {
     pub remove_sync_popup: bool,
     pub linux_async_reprojection: bool,
+    pub enable_auto_tethering: bool,
 }
 
 #[derive(SettingsSchema, Serialize, Deserialize)]
@@ -754,6 +755,7 @@ pub fn session_settings_default() -> SettingsDefault {
             patches: PatchesDefault {
                 remove_sync_popup: false,
                 linux_async_reprojection: true,
+                enable_auto_tethering: true,
             },
         },
     }
